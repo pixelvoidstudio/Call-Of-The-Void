@@ -1,0 +1,96 @@
+[gd_scene format=3 uid="uid://4pqund3nukl7"]
+
+[ext_resource type="Script" uid="uid://dwl3koja4hqs5" path="res://node_2d.gd" id="1_0e48y"]
+[ext_resource type="Texture2D" uid="uid://corkntu7islgw" path="res://cardbg.png" id="2_epypp"]
+[ext_resource type="Shader" uid="uid://dawgeocshcc3u" path="res://sprite.gdshader" id="3_0hol4"]
+[ext_resource type="Texture2D" uid="uid://br0yxheucwgcg" path="res://life.png" id="4_kdubu"]
+[ext_resource type="Texture2D" uid="uid://dpn46nqyu3jwp" path="res://void.png" id="4_q6r6c"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kdubu"]
+shader = ExtResource("3_0hol4")
+
+[node name="Node2D" type="Node2D" unique_id=2043110322]
+script = ExtResource("1_0e48y")
+file_name = "testing card"
+combo = "lllv"
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="." unique_id=981451234]
+offset_right = 53.0
+offset_bottom = 58.0
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer" unique_id=765758692]
+handle_input_locally = false
+size = Vector2i(640, 960)
+render_target_update_mode = 4
+
+[node name="Cardbg" type="Sprite2D" parent="SubViewportContainer/SubViewport" unique_id=1117554136]
+position = Vector2(320, 480)
+texture = ExtResource("2_epypp")
+
+[node name="3" type="Node2D" parent="SubViewportContainer/SubViewport" unique_id=1236225244]
+visible = false
+
+[node name="s" type="Sprite2D" parent="SubViewportContainer/SubViewport/3" unique_id=244859068]
+material = SubResource("ShaderMaterial_kdubu")
+position = Vector2(232, 344)
+texture = ExtResource("4_kdubu")
+
+[node name="s2" type="Sprite2D" parent="SubViewportContainer/SubViewport/3" unique_id=1667992410]
+material = SubResource("ShaderMaterial_kdubu")
+position = Vector2(320, 192)
+texture = ExtResource("4_kdubu")
+
+[node name="s3" type="Sprite2D" parent="SubViewportContainer/SubViewport/3" unique_id=1150196945]
+material = SubResource("ShaderMaterial_kdubu")
+position = Vector2(408, 344)
+texture = ExtResource("4_kdubu")
+
+[node name="4" type="Node2D" parent="SubViewportContainer/SubViewport" unique_id=477650037]
+
+[node name="s2" type="Sprite2D" parent="SubViewportContainer/SubViewport/4" unique_id=878711991]
+material = SubResource("ShaderMaterial_kdubu")
+position = Vector2(192, 280)
+texture = ExtResource("4_kdubu")
+
+[node name="s" type="Sprite2D" parent="SubViewportContainer/SubViewport/4" unique_id=1622862940]
+material = SubResource("ShaderMaterial_kdubu")
+position = Vector2(320, 400)
+texture = ExtResource("4_kdubu")
+
+[node name="s4" type="Sprite2D" parent="SubViewportContainer/SubViewport/4" unique_id=1806928505]
+material = SubResource("ShaderMaterial_kdubu")
+position = Vector2(320, 160)
+texture = ExtResource("4_kdubu")
+
+[node name="s3" type="Sprite2D" parent="SubViewportContainer/SubViewport/4" unique_id=1497493151]
+material = SubResource("ShaderMaterial_kdubu")
+position = Vector2(448, 280)
+texture = ExtResource("4_q6r6c")
+
+[node name="5" type="Node2D" parent="SubViewportContainer/SubViewport" unique_id=1506400672]
+visible = false
+
+[node name="s2" type="Sprite2D" parent="SubViewportContainer/SubViewport/5" unique_id=1843014492]
+material = SubResource("ShaderMaterial_kdubu")
+position = Vector2(192, 280)
+texture = ExtResource("4_q6r6c")
+
+[node name="s" type="Sprite2D" parent="SubViewportContainer/SubViewport/5" unique_id=610053440]
+material = SubResource("ShaderMaterial_kdubu")
+position = Vector2(240, 432)
+texture = ExtResource("4_q6r6c")
+
+[node name="s5" type="Sprite2D" parent="SubViewportContainer/SubViewport/5" unique_id=546140050]
+material = SubResource("ShaderMaterial_kdubu")
+position = Vector2(400, 432)
+texture = ExtResource("4_kdubu")
+
+[node name="s4" type="Sprite2D" parent="SubViewportContainer/SubViewport/5" unique_id=85675935]
+material = SubResource("ShaderMaterial_kdubu")
+position = Vector2(320, 160)
+texture = ExtResource("4_q6r6c")
+
+[node name="s3" type="Sprite2D" parent="SubViewportContainer/SubViewport/5" unique_id=1603101850]
+material = SubResource("ShaderMaterial_kdubu")
+position = Vector2(448, 280)
+texture = ExtResource("4_kdubu")

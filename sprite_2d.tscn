@@ -1,0 +1,83 @@
+[gd_scene format=3 uid="uid://s0avgoj8exc5"]
+
+[ext_resource type="Script" uid="uid://cg7m4al4xmqq6" path="res://sprite_2d.gd" id="2_lt4yx"]
+[ext_resource type="Shader" uid="uid://dlt7iso3hpytb" path="res://new_shader.gdshader" id="2_mehiu"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_mehiu"]
+load_path = "res://.godot/imported/image2.png-3d7c3103c85cadc0e2b0f2600781fccb.ctex"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lt4yx"]
+shader = ExtResource("2_mehiu")
+shader_parameter/die_texture = SubResource("CompressedTexture2D_mehiu")
+shader_parameter/cube_size = Vector3(0.5, 0.5, 0.5)
+shader_parameter/rotation_matrix = Basis(1, 0, 0, 0, 1, 0, 0, 0, 1)
+shader_parameter/outline_disabled = false
+shader_parameter/outline_color = Color(0.5, 0, 0.8, 1)
+shader_parameter/outline_thickness = 0.2000000095
+shader_parameter/antialias = 0.0630000029925
+shader_parameter/outline_messiness = 0.0
+shader_parameter/outline_noise_scale = 8.0
+shader_parameter/portal_seed = 11.775
+shader_parameter/portal_star_density_1 = 0.0510000024225
+shader_parameter/portal_star_density_2 = 0.10000000475
+shader_parameter/portal_star_density_3 = 0.1600000076
+shader_parameter/portal_star_scale_1 = 3.000000095
+shader_parameter/portal_star_scale_2 = 3.50000011875
+shader_parameter/portal_star_scale_3 = 4.000000142499999
+shader_parameter/portal_star_speed_1 = 0.5
+shader_parameter/portal_star_speed_2 = 0.8
+shader_parameter/portal_star_speed_3 = 1.1
+shader_parameter/portal_star_size_1 = 1.45300006575762
+shader_parameter/portal_star_size_2 = 1.1400000508901198
+shader_parameter/portal_star_size_3 = 0.86500003782762
+shader_parameter/portal_star_brightness = 2.5
+shader_parameter/portal_star_contrast = 0.6
+shader_parameter/portal_nebula_strength = 2.0
+shader_parameter/portal_drift_strength = 0.0390000018525
+shader_parameter/portal_void_color = Color(0, 0, 0, 1)
+shader_parameter/portal_nebula_color_1 = Color(0.08, 0.02, 0.16, 1)
+shader_parameter/portal_nebula_color_2 = Color(0.057580978, 0.014974736, 0.00498714, 1)
+shader_parameter/portal_star_color = Color(1, 1, 1, 1)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_f7cmv"]
+radius = 88.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_mehiu"]
+radius = 105.22357
+
+[node name="RigidBody2D" type="RigidBody2D" unique_id=1613472797]
+gravity_scale = 0.0
+contact_monitor = true
+max_contacts_reported = 2
+linear_damp = 3.0
+angular_damp = 1.0
+script = ExtResource("2_lt4yx")
+launch_speed = 1600.0
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1608622545]
+material = SubResource("ShaderMaterial_lt4yx")
+offset_left = -336.0
+offset_top = -336.0
+offset_right = 336.0
+offset_bottom = 336.0
+
+[node name="Label" type="Label" parent="ColorRect" unique_id=972564426]
+layout_mode = 0
+offset_left = 144.0
+offset_top = 120.0
+offset_right = 217.0
+offset_bottom = 143.0
+scale = Vector2(5.325, 5.325)
+horizontal_alignment = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=19713747]
+shape = SubResource("CircleShape2D_f7cmv")
+
+[node name="Area2D" type="Area2D" parent="." unique_id=1664352160]
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1528866689]
+shape = SubResource("CircleShape2D_mehiu")
+
+[connection signal="area_entered" from="Area2D" to="." method="_on_area_2d_mouse_entered"]
+[connection signal="area_exited" from="Area2D" to="." method="_on_area_2d_mouse_exited"]

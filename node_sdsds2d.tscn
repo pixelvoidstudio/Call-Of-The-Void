@@ -1,0 +1,181 @@
+[gd_scene format=3 uid="uid://bnfkoxheh2wv4"]
+
+[ext_resource type="Script" uid="uid://t22ibskawgn" path="res://die_manager.gd" id="1_71jwx"]
+[ext_resource type="PackedScene" uid="uid://s0avgoj8exc5" path="res://sprite_2d.tscn" id="1_xllyt"]
+[ext_resource type="Script" uid="uid://dj5mlq7p0edr2" path="res://mouse.gd" id="2_v0reh"]
+[ext_resource type="Texture2D" uid="uid://2wg6s6i57rbm" path="res://kirkle.png" id="3_w88eg"]
+[ext_resource type="Texture2D" uid="uid://ddgq110lmpg51" path="res://cards/Card Back.png" id="5_sxkas"]
+[ext_resource type="Texture2D" uid="uid://dudw1bp434vap" path="res://cards/Card Front.png" id="6_qccl6"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_xllyt"]
+radius = 16.0
+
+[sub_resource type="Curve" id="Curve_sxkas"]
+_limits = [0.0, 8.0, 0.0, 1.0]
+_data = [Vector2(0, 8), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_sxkas"]
+offsets = PackedFloat32Array(0, 0.19331743, 0.65632457, 1)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
+
+[node name="Node2D" type="Node2D" unique_id=1835565530]
+
+[node name="mouse" type="Area2D" parent="." unique_id=466518355]
+collision_layer = 4
+script = ExtResource("2_v0reh")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="mouse" unique_id=827444748]
+shape = SubResource("CircleShape2D_xllyt")
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="mouse" unique_id=1196280400]
+visible = false
+amount = 50
+lifetime = 0.8
+particle_flag_align_y = true
+direction = Vector2(-1, 0)
+gravity = Vector2(0, 0)
+initial_velocity_min = 30.0
+initial_velocity_max = 70.0
+angular_velocity_min = -720.0
+angular_velocity_max = 720.0
+angle_min = -720.0
+angle_max = 720.0
+scale_amount_curve = SubResource("Curve_sxkas")
+color_ramp = SubResource("Gradient_sxkas")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1271899994]
+zoom = Vector2(0.25, 0.25)
+
+[node name="Die Circle" type="Node2D" parent="." unique_id=1532796194]
+position = Vector2(576, 0)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Die Circle" unique_id=175846211]
+
+[node name="Kirkle" type="Sprite2D" parent="Die Circle/StaticBody2D" unique_id=845571528]
+scale = Vector2(1.056, 1.056)
+texture = ExtResource("3_w88eg")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Die Circle/StaticBody2D" unique_id=1717908594]
+scale = Vector2(0.9920003, 0.9920003)
+build_mode = 1
+polygon = PackedVector2Array(-58, -883, -58, -881.9, -104.099976, -879, -115.20001, -879, -154.29999, -873, -161.20001, -873, -222.40002, -860, -227.29999, -860, -278.3, -845, -282.40002, -845, -342.40002, -823, -345.40002, -823, -389.40002, -803, -392.5, -803, -465.5, -764, -467.59998, -764, -523.6, -727, -525.7, -727, -581.7, -683, -583.8, -683, -626.9, -643, -628.9, -643, -677.8, -592, -678.9, -592, -720.9, -541, -722, -541, -749, -503, -750.1, -503, -786.1, -445, -787.2, -445, -825.2, -370, -826.3, -370, -841.4, -333, -842.4, -333, -867.4, -260, -868.6, -260, -882.5, -205, -883.7, -205, -895.7, -139, -896.8, -139, -901.8, -93, -902.9, -93, -907, -32.099976, -907, 33.099976, -902, 92.19995, -902, 101.19995, -891, 166.30005, -891, 172.30005, -876, 231, -876, 235.30005, -856, 295.30005, -856, 298.40002, -827, 366.30005, -827, 369.5, -802, 417.5, -802, 419.59998, -769, 473.5, -769, 475.59998, -741, 514.6, -741, 516.69995, -696, 571.6, -696, 573.80005, -667, 603.69995, -667, 605.9, -616, 654.80005, -616, 655.9, -565, 697.9, -565, 699, -527, 726, -527, 727.1, -469, 763.1, -469, 764.19995, -394, 802.19995, -394, 803.30005, -347, 822.30005, -347, 823.4, -284, 844.4, -284, 845.6, -229, 859.5, -229, 860.69995, -163, 872.69995, -163, 873.80005, -117, 878.80005, -117, 879.9, -58, 882.9, -58, 884, 9, 883, 30.099976, 883, 85.19995, 877, 93.19995, 877, 148.40002, 867, 153.30005, 867, 221.09998, 849, 225.30005, 849, 282.40002, 829, 285.40002, 829, 342.30005, 804, 345.5, 804, 411.5, 769, 413.59998, 769, 476.59998, 728, 478.69995, 728, 514.69995, 700, 516.80005, 700, 565.69995, 657, 567.80005, 657, 617.80005, 607, 618.9, 607, 657.9, 562, 659, 562, 692, 518, 693.1, 518, 730.1, 461, 731.19995, 461, 753.19995, 421, 754.30005, 421, 786.30005, 353, 787.4, 353, 807.4, 300, 808.5, 300, 830.5, 226, 831.6, 226, 842.69995, 174, 843.69995, 174, 854.80005, 94, 855.9, 94, 858.9, 35, 860, 35, 859, -32, 859, -53.099976, 850, -130.20001, 850, -137.20001, 832, -219.40002, 832, -223.29999, 805, -305.3, 805, -308.40002, 780, -365.40002, 780, -368.5, 755, -416.59998, 755, -418.59998, 722, -472.59998, 722, -474.7, 676, -537.7, 676, -539.8, 620, -602.8, 620, -604.9, 551, -670, 551, -671, 480, -725, 480, -726.1, 397, -776.1, 397, -777.3, 310, -817.3, 310, -818.4, 213, -850.5, 213, -851.6, 134, -868.7, 134, -869.8, 47, -879.8, 47, -881)
+
+[node name="Die MANAGER" type="Node2D" parent="Die Circle" unique_id=1829736103]
+script = ExtResource("1_71jwx")
+
+[node name="RigidBody2D" parent="Die Circle/Die MANAGER" unique_id=1613472797 instance=ExtResource("1_xllyt")]
+position = Vector2(192, 488)
+rotation = -0.05722037
+spin_speed = 2.0
+die_radius = 100.0
+
+[node name="RigidBody2D2" parent="Die Circle/Die MANAGER" unique_id=1214896418 instance=ExtResource("1_xllyt")]
+position = Vector2(-224, 416)
+rotation = 0.7853982
+spin_speed = 2.0
+die_radius = 100.0
+
+[node name="RigidBody2D3" parent="Die Circle/Die MANAGER" unique_id=585029603 instance=ExtResource("1_xllyt")]
+position = Vector2(392, -224)
+rotation = 0.5235988
+spin_speed = 2.0
+die_radius = 100.0
+
+[node name="RigidBody2D4" parent="Die Circle/Die MANAGER" unique_id=1381732086 instance=ExtResource("1_xllyt")]
+position = Vector2(-464, -296)
+rotation = 0.40078685
+spin_speed = 2.0
+die_radius = 100.0
+
+[node name="RigidBody2D5" parent="Die Circle/Die MANAGER" unique_id=1001352391 instance=ExtResource("1_xllyt")]
+position = Vector2(-96, -72)
+rotation = -0.5235988
+spin_speed = 2.0
+die_radius = 100.0
+
+[node name="RigidBody2D6" parent="Die Circle/Die MANAGER" unique_id=1639039506 instance=ExtResource("1_xllyt")]
+position = Vector2(64, -496)
+rotation = -0.4872068
+spin_speed = 2.0
+die_radius = 100.0
+
+[node name="RigidBody2D7" parent="Die Circle/Die MANAGER" unique_id=313906202 instance=ExtResource("1_xllyt")]
+position = Vector2(-528, 200)
+rotation = 0.4533066
+spin_speed = 2.0
+die_radius = 100.0
+
+[node name="RigidBody2D8" parent="Die Circle/Die MANAGER" unique_id=5583857 instance=ExtResource("1_xllyt")]
+position = Vector2(536, 128)
+rotation = -0.5235988
+spin_speed = 2.0
+die_radius = 100.0
+
+[node name="CardBack" type="Sprite2D" parent="." unique_id=1691499709]
+position = Vector2(1912, -544)
+texture = ExtResource("5_sxkas")
+
+[node name="CardFront" type="Sprite2D" parent="." unique_id=457175106]
+position = Vector2(1920, 544)
+texture = ExtResource("6_qccl6")
+
+[node name="CardFront2" type="Sprite2D" parent="." unique_id=1615846767]
+position = Vector2(-896, 608)
+texture = ExtResource("6_qccl6")
+
+[node name="CardFront3" type="Sprite2D" parent="." unique_id=1244701502]
+position = Vector2(-1152, 608)
+texture = ExtResource("6_qccl6")
+
+[node name="CardFront4" type="Sprite2D" parent="." unique_id=158877714]
+position = Vector2(-1472, 608)
+texture = ExtResource("6_qccl6")
+
+[node name="CardFront5" type="Sprite2D" parent="." unique_id=1421732788]
+position = Vector2(-1792, 608)
+texture = ExtResource("6_qccl6")
+
+[node name="Button" type="Button" parent="." unique_id=1234843339]
+offset_left = -128.0
+offset_top = 1024.0
+offset_right = 544.0
+offset_bottom = 1216.0
+theme_override_font_sizes/font_size = 96
+text = "Roll"
+
+[node name="Button2" type="Button" parent="." unique_id=162738177]
+offset_left = 608.0
+offset_top = 1024.0
+offset_right = 1280.0
+offset_bottom = 1216.0
+theme_override_font_sizes/font_size = 96
+text = "End Turn"
+
+[node name="Label" type="Label" parent="." unique_id=1506889888]
+offset_left = -2176.0
+offset_top = -1216.0
+offset_right = -1894.0
+offset_bottom = -1084.0
+theme_override_font_sizes/font_size = 96
+text = "Score:"
+
+[node name="Label2" type="Label" parent="." unique_id=1272291092]
+offset_left = -2176.0
+offset_top = -1088.0
+offset_right = -1894.0
+offset_bottom = -956.0
+theme_override_font_sizes/font_size = 96
+text = "Crystals:"
+
+[node name="Label3" type="Label" parent="." unique_id=1599749624]
+offset_left = -2176.0
+offset_top = -956.0
+offset_right = -1932.0
+offset_bottom = -824.0
+theme_override_font_sizes/font_size = 96
+text = "Card:"
+
+[connection signal="body_entered" from="mouse" to="mouse" method="_on_body_entered"]
+[connection signal="pressed" from="Button" to="Die Circle/Die MANAGER" method="_on_button_pressed"]
+[connection signal="pressed" from="Button2" to="Die Circle/Die MANAGER" method="_on_button_2_pressed"]
