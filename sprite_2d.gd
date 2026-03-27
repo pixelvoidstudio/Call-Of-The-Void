@@ -171,7 +171,7 @@ func _on_area_2d_mouse_exited(_area:Area2D) -> void:
 
 signal picked_updated(node, is_picked)
 
-@rpc("any_peer","call_local")
+@rpc("any_peer","reliable")
 func toggle_pick(is_picked):
 	if (DIE_manager.dice_dict[self]["current_face"] in DIE_manager.non_rerollable) and is_picked:
 		return

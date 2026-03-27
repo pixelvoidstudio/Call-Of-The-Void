@@ -299,7 +299,6 @@ offset_bottom = 40.0
 alignment = 1
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/Multiplayer UI/VBoxContainer" unique_id=731180004]
-visible = false
 layout_mode = 2
 alignment = 1
 

@@ -17,28 +17,28 @@ var dice_example = {
 	}
 
 # card modifier
-var non_rerollable:        Array = ["skull"]
-var minimum_reroll_amount: int   = 2
-var thief_mode:            bool  = false
-var lunie_worth:           int   = 100
-var crystal_worth:         int   = 1
-var cat_worth:             int   = 0
-var extra_crystals:        int   = 0
-var extra_lunies:          int   = 0
-var set_bonus:             bool  = true
-var chaos_bonus:           bool  = false
-var reroll_penalty:        int   = 0
-var max_reroll:            int   = -1
-var reroll_amount:         int   = 0
-var sigil_penalty:         int   = 0
-var crystal_multiplier:    int   = 1
-var lunie_multiplier:      int   = 1
-var equilibrium:           bool  = false
-var life_and_death:        bool  = false
-var void_resistance:       bool  = false
+@export var non_rerollable:        Array = ["skull"]
+@export var minimum_reroll_amount: int   = 2
+@export var thief_mode:            bool  = false
+@export var lunie_worth:           int   = 100
+@export var crystal_worth:         int   = 1
+@export var cat_worth:             int   = 0
+@export var extra_crystals:        int   = 0
+@export var extra_lunies:          int   = 0
+@export var set_bonus:             bool  = true
+@export var chaos_bonus:           bool  = false
+@export var reroll_penalty:        int   = 0
+@export var max_reroll:            int   = -1
+@export var reroll_amount:         int   = 0
+@export var sigil_penalty:         int   = 0
+@export var crystal_multiplier:    int   = 1
+@export var lunie_multiplier:      int   = 1
+@export var equilibrium:           bool  = false
+@export var life_and_death:        bool  = false
+@export var void_resistance:       bool  = false
 
 # card DIHtionary
-var deck = []
+@export var deck = []
 var card_dict = {
 	"adorable thief":{
 		"description": "UGH",
@@ -136,6 +136,7 @@ var card_dict = {
 @onready var score_label: Label = $"../../Label"
 @onready var crystal_label: Label = $"../../Label2"
 @onready var card_label: Label = $"../../Label3"
+@onready var MM :Game= $"../../Multiplayer Manager"
 
 func reset_turn():
 	lobotomy_threshold = 3 #
@@ -168,6 +169,7 @@ func reset_turn():
 	life_and_death = false #
 	void_resistance = false #
 
+@rpc("any_peer","reliable")
 func start_turn():
 	draw_card()
 	
@@ -177,13 +179,21 @@ func start_turn():
 func end_turn():
 	pass
 
-var current_card
-func draw_card():
-	current_card = deck[0]
-	deck.remove_at(0)
-	execute_string(card_dict[current_card]["code"])
-	card_label.text = current_card
+@export var current_card = ""
 
+func draw_card():
+	if is_multiplayer_authority():
+		current_card = deck[0]
+		deck.remove_at(0)
+		execute_string(card_dict[current_card]["code"])
+		update_card.rpc(current_card)
+
+@rpc("call_local")
+func update_card(c=""):
+	$"../../CardBack".texture = load("res://cards/"+c+".png")
+	card_label.text = c
+
+@rpc("any_peer","reliable")
 func setup_cards():
 	for card in card_dict:
 		var card_amount = card_dict[card]["amount"]
@@ -195,12 +205,24 @@ func setup_cards():
 
 # ------- SETUP -------
 func _ready() -> void:
-	setup_dice()
-	setup_cards()
-	
-	start_turn()
+	MM.connect("hostConnected",_setup)
 
+@rpc("any_peer","call_local")
+func _setup():
+	
+	if MM.turn == multiplayer.get_unique_id():
+		if multiplayer.is_server():
+			setup_dice()
+			setup_cards()
+			start_turn()
+		else:
+			setup_dice.rpc_id(1)
+			setup_cards.rpc_id(1)
+			start_turn.rpc_id(1)
+
+@rpc("any_peer","reliable")
 func setup_dice():
+	
 	for DIE in get_children():
 		# connect signals
 		DIE.landed.connect(on_die_landed)
@@ -229,15 +251,21 @@ func on_die_landed(die, face):
 		finished_roll()
 
 func _on_button_pressed() -> void:
-	print(get_multiplayer_authority())
-	if reroll_amount >= max_reroll and max_reroll != -1:
-		return
-	
-	if is_rolling or get_amount([["is_picked",true]]) < minimum_reroll_amount:
-		return
-	
-	reroll_amount += 1
-	start_roll()
+	print("is my turn: ",(MM.turn == multiplayer.get_unique_id()),"   id: ",
+	MM.turn," myid: ", multiplayer.get_unique_id())
+	if MM.turn == multiplayer.get_unique_id():
+		press_roll.rpc()
+@rpc("any_peer","call_local")
+func press_roll():
+		if reroll_amount >= max_reroll and max_reroll != -1:
+			return
+		
+		if is_rolling or get_amount([["is_picked",true]]) < minimum_reroll_amount:
+			return
+		
+		reroll_amount += 1
+		print("run")
+		start_roll.rpc_id(1)
 
 func _on_button_2_pressed() -> void:
 	score_label.text = str("Score: ", calculate_score())
@@ -251,21 +279,19 @@ func _die_picked_updated(die, picked) -> void:
 	dice_dict[die]["is_picked"] = picked
 
 # ------- ROLL FUNCTIONS -------
+@rpc("any_peer","call_local")
 func start_roll():
-	print("started roll big dawg")
 	for die in dice_dict:
 		if dice_dict[die]["is_picked"] == true:
 			
 			#NEXT dawg this is_rolling statement is NOT it
 			is_rolling = true
-			
+			print(die)
 			die.roll_die()
 			dice_dict[die]["is_rolling"] = true
 			dice_dict[die]["is_snapped"] = false
 
 func finished_roll():
-	print("finished roll big dawg")
-	
 	is_rolling = false
 	unpick_all_dice()
 
@@ -274,7 +300,7 @@ func unpick_all_dice():
 		if multiplayer.is_server():
 			die.toggle_pick(false)
 		else:
-			if $"../../Multiplayer Manager".current_player_idx == multiplayer.get_unique_id():
+			if $"../../Multiplayer Manager".turn == multiplayer.get_unique_id():
 				die.toggle_pick.rpc_id(1,false)
 
 
@@ -393,6 +419,5 @@ func execute_string(code: String) -> void:
 	if err != OK:
 		print("Failed to compile dynamic script!")
 		return
-	print(dynamic_script.source_code)
 	var runner = dynamic_script.new()
 	runner.run(self)

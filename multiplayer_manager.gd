@@ -1,19 +1,23 @@
 class_name Game
 extends Node2D
 
+signal hostConnected
+
 @onready var multiplayer_ui = $"../CanvasLayer/Multiplayer UI"
 const PLAYER = preload("res://player.tscn")
 var peer = NodeTunnelPeer.new()
 var players_by_pid: Dictionary = {}
-var turn_order: Array[int] = []
-@export var current_player_idx: int = 0
+@export var max_players: int = 0
+@export var turn = 1
+
+@onready var DM :pixelvoid= $"../Die Circle/Die MANAGER"
 
 func _ready() -> void:
 	multiplayer.multiplayer_peer = peer
 	peer.connect_to_relay("relay.nodetunnel.io", 9998)
 	
 	await peer.relay_connected
-	
+	$"../CanvasLayer/Multiplayer UI/VBoxContainer/HBoxContainer2".show()
 	%OnlineID.text = peer.online_id
 	$MultiplayerSpawner.spawn_function = add_player
 
@@ -21,6 +25,8 @@ func _on_host_pressed() -> void:
 	peer.host()
 	
 	await peer.hosting
+	
+	hostConnected.emit()
 	
 	DisplayServer.clipboard_set(peer.online_id)
 	
@@ -45,44 +51,26 @@ func add_player(pid):
 	player.name = str(pid)
 	players_by_pid[pid] = player
 	
-	# TODO KYS
-	if not turn_order.has(pid):
-		turn_order.append(pid)
+	max_players += 1
+	print(max_players)
 	
-	if turn_order.size() == 1:
-		current_player_idx = 0
-		
-		if multiplayer.is_server():
-			_apply_turn.rpc(pid, current_player_idx)
+	
+	
 	
 	return player
-
+@rpc("any_peer","call_local")
 func set_next_player() -> void:
-	if turn_order.is_empty():
-		return
-	
-	current_player_idx = wrapi(current_player_idx + 1, 0, turn_order.size() + 1)
-	var next_pid := turn_order[current_player_idx]
-	
-	_apply_turn.rpc(next_pid, current_player_idx)
+	print(max_players)
+	turn = wrap(turn + 1, 1, max_players+1)
+	print(turn)
+	DM._setup.rpc_id(turn)
+	$"../Label4".text = str(turn)
 
-@rpc("authority", "call_local", "reliable")
-func _apply_turn(pid: int, idx: int):
-	current_player_idx = idx
-	$"../Die Circle/Die MANAGER".set_multiplayer_authority(pid)
-	print("Turn owner is now peer: ", pid)
-	print("Local peer: ", multiplayer.get_unique_id(), " | Die manager authority? ", $"../Die Circle/Die MANAGER".is_multiplayer_authority())
 
-@rpc("any_peer","reliable")
-func _request_next_turn() -> void:
-	if not multiplayer.is_server():
-		return
-	
-	set_next_player()
+
 
 func _on_button_2_pressed() -> void:
-	print("IS MULT AUTH: ", $"../Die Circle/Die MANAGER".is_multiplayer_authority())
-	if multiplayer.is_server():
-		_request_next_turn()
-	else:
-		_request_next_turn.rpc_id(1)
+	print("turn:", turn, "\nid: ", multiplayer.get_unique_id())
+	if turn == multiplayer.get_unique_id():
+		print("is yo turn bish boi")
+		set_next_player.rpc()
