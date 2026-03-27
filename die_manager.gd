@@ -138,6 +138,7 @@ var card_dict = {
 @onready var card_label: Label = $"../../Label3"
 @onready var MM :Game= $"../../Multiplayer Manager"
 
+@rpc("any_peer","reliable")
 func reset_turn():
 	lobotomy_threshold = 3 #
 	thief_mode = false 
@@ -209,15 +210,16 @@ func _ready() -> void:
 
 @rpc("any_peer","call_local")
 func _setup():
-	
 	if MM.turn == multiplayer.get_unique_id():
 		if multiplayer.is_server():
 			setup_dice()
 			setup_cards()
+			reset_turn()
 			start_turn()
 		else:
 			setup_dice.rpc_id(1)
 			setup_cards.rpc_id(1)
+			reset_turn.rpc_id(1)
 			start_turn.rpc_id(1)
 
 @rpc("any_peer","reliable")
