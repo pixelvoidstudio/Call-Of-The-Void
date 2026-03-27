@@ -14,19 +14,35 @@ func _input(event: InputEvent) -> void:
 		end_hold()
 
 func _on_body_entered(body: Node2D) -> void:
-	if not held:
-		return
-	
-	if body.is_in_group("DICE"):
-		if not passed_first_die:
-			if body.picked:
-				is_picking = false
-			else:
-				is_picking = true
-			
-			passed_first_die = true
+	if multiplayer.is_server():
+		if not held:
+			return
 		
-		body.toggle_pick(is_picking)
+		if body.is_in_group("DICE"):
+			if not passed_first_die:
+				if body.picked:
+					is_picking = false
+				else:
+					is_picking = true
+				
+				passed_first_die = true
+			
+			body.toggle_pick(is_picking)
+	else:
+		if $"../Multiplayer Manager".current_player_idx == multiplayer.get_unique_id():
+			if not held:
+				return
+			
+			if body.is_in_group("DICE"):
+				if not passed_first_die:
+					if body.picked:
+						is_picking = false
+					else:
+						is_picking = true
+					
+					passed_first_die = true
+				
+				body.toggle_pick.rpc_id(1,is_picking)
 
 func start_hold():
 	passed_first_die = false

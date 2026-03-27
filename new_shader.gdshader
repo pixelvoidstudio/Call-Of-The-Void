@@ -3,12 +3,13 @@ shader_type canvas_item;
 // --- Uniforms ---
 uniform sampler2D die_texture : filter_nearest; // Set Filter to Nearest for pixel art look
 uniform vec3 cube_size = vec3(0.5); // size relative to UV space
-uniform mat3 rotation_matrix = mat3(1.0); // Passed from GDScript
-
+instance uniform vec3 basis_x = vec3(1,0,0);
+instance uniform vec3 basis_y = vec3(0,1,0);
+instance uniform vec3 basis_z = vec3(0,0,1);
 // -- Outline Controls --
 uniform bool outline_disabled = false; // Set true from code to disable the outline
 uniform vec4 outline_color : source_color = vec4(0.5, 0.0, 0.8, 1.0); // Kept for compatibility, not used by the portal outline
-uniform float outline_thickness : hint_range(0.0, 100.0) = 0.08;
+instance uniform float outline_thickness : hint_range(0.0, 100.0) = 0.08;
 uniform float antialias : hint_range(0.0, 0.1) = 0.02;
 
 // New: outline shape randomization
@@ -43,7 +44,7 @@ uniform float portal_drift_strength : hint_range(0.0, 1.0) = 0.08;
 uniform vec4 portal_void_color : source_color = vec4(0.005, 0.005, 0.012, 1.0);
 uniform vec4 portal_nebula_color_1 : source_color = vec4(0.08, 0.02, 0.16, 1.0);
 uniform vec4 portal_nebula_color_2 : source_color = vec4(0.01, 0.03, 0.08, 1.0);
-uniform vec4 portal_star_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
+instance uniform vec4 portal_star_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
 
 // --- Helpers ---
 float sdBox(vec3 p, vec3 b) {
@@ -196,6 +197,9 @@ void fragment() {
 	float min_dist = 100.0;
 
 	// 3. Raymarching Loop
+	mat3 rotation_matrix = mat3(
+		basis_x,basis_y,basis_z
+	);
 	for (int i = 0; i < 64; i++) {
 		p = (ro + rd * d) * rotation_matrix;
 		float current_dist = sdBox(p, cube_size);

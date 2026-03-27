@@ -8,7 +8,7 @@ var is_rolling = false
 # dice dict variables
 var l = ["lunie","cat","life","skull","crystal","void"]
 
-var dice_dict = {}
+@export var dice_dict = {}
 var dice_example = {
 	"is_picked": false,
 	"is_rolling": false,
@@ -136,6 +136,7 @@ var card_dict = {
 @onready var score_label: Label = $"../../Label"
 @onready var crystal_label: Label = $"../../Label2"
 @onready var card_label: Label = $"../../Label3"
+
 func reset_turn():
 	lobotomy_threshold = 3 #
 	thief_mode = false 
@@ -228,6 +229,7 @@ func on_die_landed(die, face):
 		finished_roll()
 
 func _on_button_pressed() -> void:
+	print(get_multiplayer_authority())
 	if reroll_amount >= max_reroll and max_reroll != -1:
 		return
 	
@@ -269,7 +271,12 @@ func finished_roll():
 
 func unpick_all_dice():
 	for die in dice_dict:
-		die.toggle_pick(false)
+		if multiplayer.is_server():
+			die.toggle_pick(false)
+		else:
+			if $"../../Multiplayer Manager".current_player_idx == multiplayer.get_unique_id():
+				die.toggle_pick.rpc_id(1,false)
+
 
 # ------- HELPERS -------
 func get_amount(checklist = []) -> int :

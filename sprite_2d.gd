@@ -3,7 +3,7 @@ extends RigidBody2D
 @export var launch_speed: float = 800.0
 @export var spin_speed: float = 5.0
 
-var die_basis: Basis = Basis() # This stores our 3D rotation
+@export var die_basis: Basis = Basis() # This stores our 3D rotation
 
 var can_click = false
 
@@ -37,6 +37,9 @@ var value = -1
 @export var die_radius: float = 10.0 # Adjust based on your ColorRect size
 
 func _physics_process(delta):
+	if not multiplayer.is_server():
+		return
+	
 	var velocity = linear_velocity
 	var speed = velocity.length()
 	
@@ -55,7 +58,9 @@ func _physics_process(delta):
 		die_basis = die_basis.rotated(rotation_axis, rotation_angle)
 		
 		# 4. Push to shader
-		rect.material.set_shader_parameter("rotation_matrix", die_basis)
+		rect.set_instance_shader_parameter("basis_x", die_basis.x)
+		rect.set_instance_shader_parameter("basis_y", die_basis.y)
+		rect.set_instance_shader_parameter("basis_z", die_basis.z)
 	else:
 		if DIE_manager.dice_dict[self]["is_rolling"]:
 			stop_rolling()
@@ -113,8 +118,20 @@ func snap_to_face():
 	
 	var target_basis = Basis.from_euler(target_euler)
 	var tween = create_tween()
-	tween.tween_method(func(b): rect.material.set_shader_parameter("rotation_matrix", b), 
-		die_basis, target_basis, 0.4).set_trans(Tween.TRANS_QUART)
+	#tween.tween_method(func(b): rect.set_shader_parameter("rotation_matrix", b), 
+		#die_basis, target_basis, 0.4).set_trans(Tween.TRANS_QUART)
+	
+	tween.tween_method(
+		func(b: Basis): 
+			# Deconstruct the basis into the three instance uniforms
+			rect.set_instance_shader_parameter("basis_x", b.x)
+			rect.set_instance_shader_parameter("basis_y", b.y)
+			rect.set_instance_shader_parameter("basis_z", b.z),
+		die_basis, 
+		target_basis, 
+		0.4
+	).set_trans(Tween.TRANS_QUART)
+	
 	die_basis = target_basis
 	value = get_die_value()
 	
@@ -132,9 +149,9 @@ func update_visibility():
 	outline_tween.set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
 	
 	if picked:
-		outline_tween.tween_property(rect.material, "shader_parameter/outline_thickness", 0.15, 0.1)
+		outline_tween.tween_property(rect, "instance_shader_parameters/outline_thickness", 0.15, 0.1)
 	else:
-		outline_tween.tween_property(rect.material, "shader_parameter/outline_thickness", 0.05, 0.1)
+		outline_tween.tween_property(rect, "instance_shader_parameters/outline_thickness", 0.05, 0.1)
 	
 	if star_tween and star_tween.is_running():
 		star_tween.kill()
@@ -143,9 +160,9 @@ func update_visibility():
 	star_tween.set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
 	
 	if picked:
-		star_tween.tween_property(rect.material, "shader_parameter/portal_star_color", Color.WHITE, 0.1)
+		star_tween.tween_property(rect, "instance_shader_parameters/portal_star_color", Color.WHITE, 0.1)
 	else:
-		star_tween.tween_property(rect.material, "shader_parameter/portal_star_color", Color.BLACK, 0.1)
+		star_tween.tween_property(rect, "instance_shader_parameters/portal_star_color", Color.BLACK, 0.1)
 
 func _on_area_2d_mouse_entered(_area:Area2D) -> void:
 	can_click = true
@@ -153,6 +170,8 @@ func _on_area_2d_mouse_exited(_area:Area2D) -> void:
 	can_click = false
 
 signal picked_updated(node, is_picked)
+
+@rpc("any_peer","call_local")
 func toggle_pick(is_picked):
 	if (DIE_manager.dice_dict[self]["current_face"] in DIE_manager.non_rerollable) and is_picked:
 		return

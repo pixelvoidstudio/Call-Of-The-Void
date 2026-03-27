@@ -10,10 +10,8 @@ load_path = "res://.godot/imported/image2.png-3d7c3103c85cadc0e2b0f2600781fccb.c
 shader = ExtResource("2_mehiu")
 shader_parameter/die_texture = SubResource("CompressedTexture2D_mehiu")
 shader_parameter/cube_size = Vector3(0.5, 0.5, 0.5)
-shader_parameter/rotation_matrix = Basis(1, 0, 0, 0, 1, 0, 0, 0, 1)
 shader_parameter/outline_disabled = false
 shader_parameter/outline_color = Color(0.5, 0, 0.8, 1)
-shader_parameter/outline_thickness = 0.2000000095
 shader_parameter/antialias = 0.0630000029925
 shader_parameter/outline_messiness = 0.0
 shader_parameter/outline_noise_scale = 8.0
@@ -37,13 +35,38 @@ shader_parameter/portal_drift_strength = 0.0390000018525
 shader_parameter/portal_void_color = Color(0, 0, 0, 1)
 shader_parameter/portal_nebula_color_1 = Color(0.08, 0.02, 0.16, 1)
 shader_parameter/portal_nebula_color_2 = Color(0.057580978, 0.014974736, 0.00498714, 1)
-shader_parameter/portal_star_color = Color(1, 1, 1, 1)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_f7cmv"]
 radius = 88.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_mehiu"]
 radius = 105.22357
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_mehiu"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+properties/2/path = NodePath(".:die_basis")
+properties/2/spawn = true
+properties/2/replication_mode = 1
+properties/3/path = NodePath("ColorRect:instance_shader_parameters/outline_thickness")
+properties/3/spawn = true
+properties/3/replication_mode = 1
+properties/4/path = NodePath("ColorRect:instance_shader_parameters/basis_x")
+properties/4/spawn = true
+properties/4/replication_mode = 1
+properties/5/path = NodePath("ColorRect:instance_shader_parameters/basis_y")
+properties/5/spawn = true
+properties/5/replication_mode = 1
+properties/6/path = NodePath("ColorRect:instance_shader_parameters/basis_z")
+properties/6/spawn = true
+properties/6/replication_mode = 1
+properties/7/path = NodePath("ColorRect:instance_shader_parameters/portal_star_color")
+properties/7/spawn = true
+properties/7/replication_mode = 1
 
 [node name="RigidBody2D" type="RigidBody2D" unique_id=1613472797]
 gravity_scale = 0.0
@@ -78,6 +101,9 @@ collision_mask = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1528866689]
 shape = SubResource("CircleShape2D_mehiu")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1557859364]
+replication_config = SubResource("SceneReplicationConfig_mehiu")
 
 [connection signal="area_entered" from="Area2D" to="." method="_on_area_2d_mouse_entered"]
 [connection signal="area_exited" from="Area2D" to="." method="_on_area_2d_mouse_exited"]
